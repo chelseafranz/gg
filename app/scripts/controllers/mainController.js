@@ -49,3 +49,9 @@ app.controller("AppCtrl", ["$scope", "$firebaseAuth",
     $scope.authObj = $firebaseAuth(ref);
   }
 ]);
+app.config( function($mdThemingProvider){
+    // Configure a dark theme with primary foreground yellow
+    $mdThemingProvider.theme('docs-dark', 'default')
+        .primaryPalette('yellow')
+        .dark();
+  });

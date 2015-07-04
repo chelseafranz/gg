@@ -18,20 +18,18 @@ var myDataRef = new Firebase('https://girl-gang.firebaseio.com');
                           console.log("Successfully created user account with uid:", userData.uid);
                           $('#messageInput').val('');
                       };
-
                       });
-
-
 
               }
             });
 
-// $('#googleLogin').on('click',function(){
-    ref.authWithOAuthPopup("google", function(error, authData) {
-      if (error) {
-        console.log("Login Failed!", error);
-      } else {
-        console.log("Authenticated successfully with payload:", authData);
-      }
-    });
-// });
+
+            ref.authWithOAuthPopup("google", function(error, authData) {
+              if (error) {
+                console.log("Login Failed!", error);
+              } else {
+                console.log("Authenticated successfully");
+                // payload = authData
+              }
+            });
+    
