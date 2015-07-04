@@ -44,3 +44,8 @@
                 });
 
 })();
+app.controller("AppCtrl", ["$scope", "$firebaseAuth",
+  function($scope, $firebaseAuth) {
+    $scope.authObj = $firebaseAuth(ref);
+  }
+]);

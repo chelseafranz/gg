@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="/bower_components/angular-material/angular-material.min.css">
     <link href='http://fonts.googleapis.com/css?family=Oswald:400,700|Open+Sans+Condensed:300,300italic' rel='stylesheet' type='text/css'>
     <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+    <script src="https://cdn.firebase.com/js/simple-login/1.6.4/firebase-simple-login.js"></script>
 
 
     <!-- build:js scripts/vendor/modernizr.js -->
@@ -35,21 +36,16 @@
      <hr>
      <h1 class="animated bounce">Hello {{yourName}}!</h1>
       <h1>'Allo, 'Allo!</h1>
-
-
+      <input type='email' id='emailInput' placeholder='email'>
+    <input type='password' id='passwordInput' placeholder='password'>
        </div>
-       <div ng-controller="AppCtrl" class="buttondemoBasicUsage" ng-app="MyApp">
-              <md-content>
-                  <section layout="row" layout-sm="column" layout-align="center center">
-                    <md-button class="md-raised">Button</md-button>
-                    <md-button class="md-raised md-primary">Primary</md-button>
-                    <md-button ng-disabled="true" class="md-raised md-primary">Disabled</md-button>
-                    <md-button class="md-raised md-warn">Warn</md-button>
-                    <div class="label">Raised</div>
-                  </section>
-                  </md-content>
-          </div>
 
+<div layout="column" ng-app="MyApp" >
+    <section layout="row" layout-sm="column" layout-align="center center">
+        <md-button id="googleLogin" class="md-fab" aria-label="Sign-in with Google">
+            <span class="fontawesome-google-plus-sign"></span>
+        </md-button>
+</div>
 
 
 
@@ -74,6 +70,7 @@
         <!-- build:js scripts/main.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/MainController.js"></script>
+        <script src="scripts/factories/userFactory.js"></script>
 
         <!-- endbuild -->
 </body>

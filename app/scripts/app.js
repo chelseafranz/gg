@@ -1,48 +1,37 @@
 var app = angular.module("MyApp", []);
+var ref = new Firebase("https://girl-gang.firebaseio.com");
 
-(function() {
-  'use strict';
+var myDataRef = new Firebase('https://girl-gang.firebaseio.com');
 
-  angular.module('MyApp')
-    .controller('AppCtrl', function($scope) {
-      $scope.demo = {
-        topDirections: ['left', 'up'],
-        bottomDirections: ['down', 'right'],
 
-        isOpen: false,
+      $('#passwordInput').keypress(function (e) {
+              if (e.keyCode == 13) {
+                var email = $('#emailInput').val();
+                var password = $('#passwordInput').val();
+                ref.createUser({
+                        email    : email,
+                        password : password
+                      }, function(error, userData) {
+                        if (error) {
+                          console.log("Error creating user:", error);
+                        } else {
+                          console.log("Successfully created user account with uid:", userData.uid);
+                          $('#messageInput').val('');
+                      };
 
-        availableModes: ['md-fling', 'md-scale'],
-        selectedMode: 'md-fling',
+                      });
 
-        availableDirections: ['up', 'down', 'left', 'right'],
-        selectedDirection: 'up'
-      };
+
+
+              }
+            });
+
+// $('#googleLogin').on('click',function(){
+    ref.authWithOAuthPopup("google", function(error, authData) {
+      if (error) {
+        console.log("Login Failed!", error);
+      } else {
+        console.log("Authenticated successfully with payload:", authData);
+      }
     });
-
-    angular.module('MyApp')
-
-    .controller('AppCtrl', function($scope) {
-      $scope.title1 = 'Button';
-      $scope.title4 = 'Warn';
-      $scope.isDisabled = true;
-
-      $scope.googleUrl = 'http://google.com';
-
-    });
-
-    angular.module( 'MyApp', [ 'ngMaterial' ] )
-                .controller("AppCtrl", function($scope) {
-                  $scope.demo = {
-                    topDirections: ['left', 'up'],
-                    bottomDirections: ['down', 'right'],
-
-                    isOpen: false,
-
-                    availableModes: ['md-fling', 'md-scale'],
-                    selectedMode: 'md-fling',
-
-                    availableDirections: ['up', 'down', 'left', 'right'],
-                    selectedDirection: 'up'};
-                });
-
-})();
+// });
