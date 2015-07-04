@@ -1,5 +1,3 @@
-var myApp = angular.module('MyApp', []);
-
 (function() {
   'use strict';
 
