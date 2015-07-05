@@ -21,7 +21,7 @@
 // Custom Styles
 body {
   background: #fafafa;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Open Sans Condensed';
   color: #333;
 }
 
@@ -31,15 +31,17 @@ body {
   font-size: 18px;
   font-weight: 200;
   line-height: 30px;
-  background-color: #eee;
+  
   border-radius: 6px;
   padding: 60px;
-  h1 {
+
+}
+h1 {
     font-size: 60px;
     line-height: 1;
     letter-spacing: -1px;
+    font-family: 'Oswald';
   }
-}
 .buttondemoBasicUsage section {
   background: #f7f7f7;
   border-radius: 3px;

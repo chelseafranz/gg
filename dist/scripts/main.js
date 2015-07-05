@@ -1,10 +1,9 @@
-var app = angular.module("MyApp", []);
+var app = angular.module("MyApp", ['ngMaterial','ngRoute']);
 var ref = new Firebase("https://girl-gang.firebaseio.com");
-
 var myDataRef = new Firebase('https://girl-gang.firebaseio.com');
 
 
-      $('#passwordInput').keypress(function (e) {
+      $('#passwordInput').click(function (e) {
               if (e.keyCode == 13) {
                 var email = $('#emailInput').val();
                 var password = $('#passwordInput').val();
@@ -16,7 +15,7 @@ var myDataRef = new Firebase('https://girl-gang.firebaseio.com');
                           console.log("Error creating user:", error);
                         } else {
                           console.log("Successfully created user account with uid:", userData.uid);
-                          $('#messageInput').val('');
+                          $location.path('/start/');
                       };
                       });
 
@@ -24,6 +23,136 @@ var myDataRef = new Firebase('https://girl-gang.firebaseio.com');
             });
 
 
+
+
+
+app.config(['$routeProvider', function($routeProvider){
+
+
+ $routeProvider.when('/',{
+    templateUrl: 'views/loginTemplate.html',
+    controller: 'AppCtrl'
+ });
+
+    $routeProvider.when('/start', {
+      templateUrl: 'views/startTemplate.html',
+      controller: 'StartController'
+    });
+
+     $routeProvider.when('/users/:uid', {
+      templateUrl: 'scripts/views/user-profile.html',
+      controller: 'AppCtrl'
+     });
+}]);
+
+
+
+
+app.controller('AppCtrl', ['$scope', '$firebaseAuth', '$location', function($scope, $firebaseAuth, $location) {
+
+ $scope.authObj = $firebaseAuth(ref);
+    $scope.title1 = 'Button';
+    $scope.title4 = 'Warn';
+    $scope.isDisabled = true;
+    $scope.googleUrl = 'http://google.com';
+
+
+    $scope.login = function(){
+  UserFactory.login()
+}
+
+}]);
+
+// var login= function(){
+//         var email = $('#emailInput').val();
+//         var password = $('#passwordInput').val();
+//         var params = 'username='+email+'&password='+password;
+
+//         ref.createUser({
+//                         email    : email,
+//                         password : password
+//                       }, function(error, userData) {
+//                         if (error) {
+//                           console.log("Error creating user:", error);
+//                         } else {
+//                           console.log("Successfully created user account with uid:", userData.uid);
+//                           $location.path('/start/');
+//                       };
+//                       });
+
+//               };
+
+
+
+
+ // $('#passwordInput').keypress(function (e) {
+ //              if (e.keyCode == 13) {
+ //                var email = $('#emailInput').val();
+ //                var password = $('#passwordInput').val();
+ //                ref.createUser({
+ //                        email    : email,
+ //                        password : password
+ //                      }, function(error, userData) {
+ //                        if (error) {
+ //                          console.log("Error creating user:", error);
+ //                        } else {
+ //                          console.log("Successfully created user account with uid:", userData.uid);
+ //                          $location.path('/start/');
+ //                      };
+ //                      });
+
+ //              }
+ //            });
+
+
+    angular.module( 'MyApp' )
+                .controller("AppCtrl", function($scope) {
+                  
+                });
+
+
+// app.controller("AppCtrl", ["$scope", "$firebaseAuth",
+//   function($scope, $firebaseAuth) {
+//     $scope.authObj = $firebaseAuth(ref);
+//   }
+// ]);
+
+// create a User factory with a getFullName() method
+app.factory("UserFactory", function($firebaseObject) {
+  
+
+  var login = function(){
+  console.log('hello!');
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return{
+          login : login
+        }
+
+
+
+
+
+
+  });
+
+// create a User object from our Factory
+
+
+
+      // Google authentication
             // ref.authWithOAuthPopup("google", function(error, authData) {
             //   if (error) {
             //     console.log("Login Failed!", error);
@@ -32,87 +161,17 @@ var myDataRef = new Firebase('https://girl-gang.firebaseio.com');
             //     // payload = authData
             //   }
             // });
+      // Facebook authentication
+        // ref.authWithOAuthPopup("facebook", function(error, authData) {
+        //   if (error) {
+        //     console.log("Login Failed!", error);
+        //   } else {
+        //     console.log("Authenticated successfully with payload:", authData);
+        // }
+        // });
 
-        ref.authWithOAuthPopup("facebook", function(error, authData) {
-          if (error) {
-            console.log("Login Failed!", error);
-          } else {
-            console.log("Authenticated successfully with payload:", authData);
-        }
-        });
 
-(function() {
-  'use strict';
 
-  angular.module('MyApp')
-    .controller('AppCtrl', function($scope) {
-      $scope.demo = {
-        topDirections: ['left', 'up'],
-        bottomDirections: ['down', 'right'],
 
-        isOpen: false,
 
-        availableModes: ['md-fling', 'md-scale'],
-        selectedMode: 'md-fling',
 
-        availableDirections: ['up', 'down', 'left', 'right'],
-        selectedDirection: 'up'
-      };
-    });
-
-    angular.module('MyApp')
-
-    .controller('AppCtrl', function($scope) {
-      $scope.title1 = 'Button';
-      $scope.title4 = 'Warn';
-      $scope.isDisabled = true;
-
-      $scope.googleUrl = 'http://google.com';
-
-    });
-
-    angular.module( 'MyApp', [ 'ngMaterial' ] )
-                .controller("AppCtrl", function($scope) {
-                  $scope.demo = {
-                    topDirections: ['left', 'up'],
-                    bottomDirections: ['down', 'right'],
-
-                    isOpen: false,
-
-                    availableModes: ['md-fling', 'md-scale'],
-                    selectedMode: 'md-fling',
-
-                    availableDirections: ['up', 'down', 'left', 'right'],
-                    selectedDirection: 'up'};
-                });
-
-})();
-app.controller("AppCtrl", ["$scope", "$firebaseAuth",
-  function($scope, $firebaseAuth) {
-    $scope.authObj = $firebaseAuth(ref);
-  }
-]);
-app.config( function($mdThemingProvider){
-    // Configure a dark theme with primary foreground yellow
-    $mdThemingProvider.theme('docs-dark', 'default')
-        .primaryPalette('yellow')
-        .dark();
-  });
-
-// create a User factory with a getFullName() method
-app.factory("UserFactory", function($firebaseObject) {
-  return $firebaseObject.$extend({
-      getFullName: function() {
-        // concatenate first and last name
-        return this.first_name + " " + this.last_name;
-      }
-   });
-});
-
-// create a User object from our Factory
-app.factory("User", function(UserFactory) {
-  var ref = new Firebase(URL+"/users/");
-  return function(userid) {
-    return new UserFactory(ref.child(userid));
-  }
-});

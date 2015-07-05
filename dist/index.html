@@ -21,49 +21,31 @@
   </head>
   <body ng-app="MyApp" ng-controller="AppCtrl">
 
-    <div class="hero-unit">
+  <div class="hero-unit">
+
+ 
+
+<script type="text/ng-template" id="bottom-sheet-list-template.html">
+<md-bottom-sheet class="md-list md-has-header">
+ 
+
+    </md-list-item>
+  </md-list>
+</md-bottom-sheet>
+</script>
 
 
-        <label>Name:</label>
-     <input type="text" ng-model="yourName" placeholder="Enter a name here">
-     <hr>
-     <h1 class="animated bounce">Hello {{yourName}}!</h1>
-      <h1>'Allo, 'Allo!</h1>
 
-     <md-input-container>
-     <label>email</label>
-     <input mg-mode="user.email" type="email" id="emailInput">
-      </md-input-container>
+  
+    <h1>GIRL GANG</h1>
+    <a href="/start">start</a>
+    <ng-view></ng-view>
 
-      <md-input-container>
-      <label>password</label>
-      <input mg-mode="user.password" type="password" id="passwordInput">
-       </md-input-container>
 
-       </div>
 
-<div layout="column" ng-app="MyApp" >
-    <section layout="row" layout-sm="column" layout-align="center center">
-        <md-fab-speed-dial md-open="demo.isOpen" md-direction="right" ng-class="demo.selectedMode">
-        <md-fab-trigger>
-          <md-button aria-label="menu" class="md-fab md-warn">
-            <span class="fontawesome-double-angle-right"></span>
-          </md-button>
-        </md-fab-trigger>
+    
+  </div> <!-- end hero unit -->
 
-        <md-fab-actions>
-          <md-button aria-label="twitter" class="md-fab md-raised md-mini">
-            Tw
-         </md-button>
-          <md-button aria-label="facebook" class="md-fab md-raised md-mini">
-            FB
-          </md-button>
-          <md-button id="google" ng-click="authWithOAuthPopup()" aria-label="Google hangout" class="md-fab md-raised md-mini">
-            google
-          </md-button>
-        </md-fab-actions>
-      </md-fab-speed-dial>
-</div>
 
 
 

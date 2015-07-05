@@ -1,17 +1,58 @@
 // create a User factory with a getFullName() method
 app.factory("UserFactory", function($firebaseObject) {
-  return $firebaseObject.$extend({
-      getFullName: function() {
-        // concatenate first and last name
-        return this.first_name + " " + this.last_name;
-      }
-   });
-});
+  
+
+  var login = function(){
+  console.log('hello!');
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return{
+          login : login
+        }
+
+
+
+
+
+
+  });
 
 // create a User object from our Factory
-app.factory("User", function(UserFactory) {
-  var ref = new Firebase(URL+"/users/");
-  return function(userid) {
-    return new UserFactory(ref.child(userid));
-  }
-});
+
+
+
+      // Google authentication
+            // ref.authWithOAuthPopup("google", function(error, authData) {
+            //   if (error) {
+            //     console.log("Login Failed!", error);
+            //   } else {
+            //     console.log("Authenticated successfully");
+            //     // payload = authData
+            //   }
+            // });
+      // Facebook authentication
+        // ref.authWithOAuthPopup("facebook", function(error, authData) {
+        //   if (error) {
+        //     console.log("Login Failed!", error);
+        //   } else {
+        //     console.log("Authenticated successfully with payload:", authData);
+        // }
+        // });
+
+
+
+
+
+

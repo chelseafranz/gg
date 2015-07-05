@@ -1,0 +1,41 @@
+<h1>Login</h1>
+<md-input-container>
+       <label>email</label>
+       <input mg-mode="user.email" type="email" id="emailInput">
+ </md-input-container>
+
+    <md-input-container>
+        <label>password</label>
+        <input mg-mode="user.password" type="password" id="passwordInput">
+    </md-input-container>
+
+    
+    <md-button class="md-fab md-warn">
+    <md-tooltip>Login</md-tooltip>
+    <span class="fontawesome-arrow-right"></span>
+    </md-button> 
+    <br>
+     
+    <md-button ng-click="login()" class="md-fab md-warn login">
+    <md-tooltip>Join the gang</md-tooltip>
+    <span class="fontawesome-bolt"></span>
+    </md-button>
+
+    <md-fab-speed-dial md-open="demo.isOpen" md-direction="right" ng-class="demo.selectedMode">
+        <md-fab-trigger>
+          <md-button aria-label="menu" class="md-fab md-warn">
+            <span class="fontawesome-double-angle-right"></span>
+          </md-button>
+
+        </md-fab-trigger>
+
+        <md-fab-actions>
+          <md-button aria-label="twitter" class="md-fab md-raised md-mini">
+            Tw
+         </md-button>
+          
+          <md-button id="google" ng-click="authWithOAuthPopup()" aria-label="Google hangout" class="md-fab md-raised md-mini">
+            google
+          </md-button>
+        </md-fab-actions>
+      </md-fab-speed-dial>

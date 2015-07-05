@@ -1,57 +1,68 @@
-(function() {
-  'use strict';
+app.controller('AppCtrl', ['$scope', '$firebaseAuth', '$location', function($scope, $firebaseAuth, $location) {
 
-  angular.module('MyApp')
-    .controller('AppCtrl', function($scope) {
-      $scope.demo = {
-        topDirections: ['left', 'up'],
-        bottomDirections: ['down', 'right'],
+ $scope.authObj = $firebaseAuth(ref);
+    $scope.title1 = 'Button';
+    $scope.title4 = 'Warn';
+    $scope.isDisabled = true;
+    $scope.googleUrl = 'http://google.com';
 
-        isOpen: false,
 
-        availableModes: ['md-fling', 'md-scale'],
-        selectedMode: 'md-fling',
+    $scope.login = function(){
+  UserFactory.login()
+}
 
-        availableDirections: ['up', 'down', 'left', 'right'],
-        selectedDirection: 'up'
-      };
-    });
+}]);
 
-    angular.module('MyApp')
+// var login= function(){
+//         var email = $('#emailInput').val();
+//         var password = $('#passwordInput').val();
+//         var params = 'username='+email+'&password='+password;
 
-    .controller('AppCtrl', function($scope) {
-      $scope.title1 = 'Button';
-      $scope.title4 = 'Warn';
-      $scope.isDisabled = true;
+//         ref.createUser({
+//                         email    : email,
+//                         password : password
+//                       }, function(error, userData) {
+//                         if (error) {
+//                           console.log("Error creating user:", error);
+//                         } else {
+//                           console.log("Successfully created user account with uid:", userData.uid);
+//                           $location.path('/start/');
+//                       };
+//                       });
 
-      $scope.googleUrl = 'http://google.com';
+//               };
 
-    });
 
-    angular.module( 'MyApp', [ 'ngMaterial' ] )
+
+
+ // $('#passwordInput').keypress(function (e) {
+ //              if (e.keyCode == 13) {
+ //                var email = $('#emailInput').val();
+ //                var password = $('#passwordInput').val();
+ //                ref.createUser({
+ //                        email    : email,
+ //                        password : password
+ //                      }, function(error, userData) {
+ //                        if (error) {
+ //                          console.log("Error creating user:", error);
+ //                        } else {
+ //                          console.log("Successfully created user account with uid:", userData.uid);
+ //                          $location.path('/start/');
+ //                      };
+ //                      });
+
+ //              }
+ //            });
+
+
+    angular.module( 'MyApp' )
                 .controller("AppCtrl", function($scope) {
-                  $scope.demo = {
-                    topDirections: ['left', 'up'],
-                    bottomDirections: ['down', 'right'],
-
-                    isOpen: false,
-
-                    availableModes: ['md-fling', 'md-scale'],
-                    selectedMode: 'md-fling',
-
-                    availableDirections: ['up', 'down', 'left', 'right'],
-                    selectedDirection: 'up'};
+                  
                 });
 
-})();
-app.controller("AppCtrl", ["$scope", "$firebaseAuth",
-  function($scope, $firebaseAuth) {
-    $scope.authObj = $firebaseAuth(ref);
-  }
-]);
-app.config( function($mdThemingProvider){
-    // Configure a dark theme with primary foreground yellow
-    $mdThemingProvider.theme('docs-dark', 'default')
-        .primaryPalette('yellow')
-        .dark();
-  });
+
+// app.controller("AppCtrl", ["$scope", "$firebaseAuth",
+//   function($scope, $firebaseAuth) {
+//     $scope.authObj = $firebaseAuth(ref);
+//   }
+// ]);

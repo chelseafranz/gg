@@ -58363,3 +58363,994 @@ angular.module("material.core").constant("$MD_THEME_CSS", "/* mixin definition ;
  * License: MIT
  */
 !function(a){"use strict";angular.module("firebase",[]).value("Firebase",a.Firebase)}(window),function(){"use strict";angular.module("firebase").factory("$firebaseArray",["$log","$firebaseUtils","$q",function(a,b,c){function d(a){if(!(this instanceof d))return new d(a);var c=this;return this._observers=[],this.$list=[],this._ref=a,this._sync=new e(this),b.assertValidRef(a,"Must pass a valid Firebase reference to $firebaseArray (not a string or URL)"),this._indexCache={},b.getPublicMethods(c,function(a,b){c.$list[b]=a.bind(c)}),this._sync.init(this.$list),this.$list}function e(d){function e(a){if(!r.isDestroyed){r.isDestroyed=!0;var b=d.$ref();b.off("child_added",j),b.off("child_moved",l),b.off("child_changed",k),b.off("child_removed",m),d=null,q(a||"destroyed")}}function f(b){var c=d.$ref();c.on("child_added",j,p),c.on("child_moved",l,p),c.on("child_changed",k,p),c.on("child_removed",m,p),c.once("value",function(c){angular.isArray(c.val())&&a.warn("Storing data using array indices in Firebase can result in unexpected behavior. See https://www.firebase.com/docs/web/guide/understanding-data.html#section-arrays-in-firebase for more information."),q(null,b)},q)}function g(a,b){o||(o=!0,a?i.reject(a):i.resolve(b))}function h(a,b){var d=c.when(a);d.then(function(a){a&&b(a)}),o||n.push(d)}var i=b.defer(),j=function(a,b){h(d.$$added(a,b),function(a){d.$$process("child_added",a,b)})},k=function(a){var c=d.$getRecord(b.getKey(a));c&&h(d.$$updated(a),function(){d.$$process("child_changed",c)})},l=function(a,c){var e=d.$getRecord(b.getKey(a));e&&h(d.$$moved(a,c),function(){d.$$process("child_moved",e,c)})},m=function(a){var c=d.$getRecord(b.getKey(a));c&&h(d.$$removed(a),function(){d.$$process("child_removed",c)})},n=[],o=!1,p=b.batch(function(a){g(a),d&&d.$$error(a)}),q=b.batch(g),r={destroy:e,isDestroyed:!1,init:f,ready:function(){return i.promise.then(function(a){return c.all(n).then(function(){return a})})}};return r}return d.prototype={$add:function(a){this._assertNotDestroyed("$add");var c=b.defer(),d=this.$ref().ref().push();return d.set(b.toJSON(a),b.makeNodeResolver(c)),c.promise.then(function(){return d})},$save:function(a){this._assertNotDestroyed("$save");var c=this,d=c._resolveItem(a),e=c.$keyAt(d);if(null!==e){var f=c.$ref().ref().child(e),g=b.toJSON(d);return b.doSet(f,g).then(function(){return c.$$notify("child_changed",e),f})}return b.reject("Invalid record; could determine key for "+a)},$remove:function(a){this._assertNotDestroyed("$remove");var c=this.$keyAt(a);if(null!==c){var d=this.$ref().ref().child(c);return b.doRemove(d).then(function(){return d})}return b.reject("Invalid record; could not determine key for "+a)},$keyAt:function(a){var b=this._resolveItem(a);return this.$$getKey(b)},$indexFor:function(a){var b=this,c=b._indexCache;if(!c.hasOwnProperty(a)||b.$keyAt(c[a])!==a){var d=b.$list.findIndex(function(c){return b.$$getKey(c)===a});-1!==d&&(c[a]=d)}return c.hasOwnProperty(a)?c[a]:-1},$loaded:function(a,b){var c=this._sync.ready();return arguments.length&&(c=c.then.call(c,a,b)),c},$ref:function(){return this._ref},$watch:function(a,b){var c=this._observers;return c.push([a,b]),function(){var d=c.findIndex(function(c){return c[0]===a&&c[1]===b});d>-1&&c.splice(d,1)}},$destroy:function(a){this._isDestroyed||(this._isDestroyed=!0,this._sync.destroy(a),this.$list.length=0)},$getRecord:function(a){var b=this.$indexFor(a);return b>-1?this.$list[b]:null},$$added:function(a){var c=this.$indexFor(b.getKey(a));if(-1===c){var d=a.val();return angular.isObject(d)||(d={$value:d}),d.$id=b.getKey(a),d.$priority=a.getPriority(),b.applyDefaults(d,this.$$defaults),d}return!1},$$removed:function(a){return this.$indexFor(b.getKey(a))>-1},$$updated:function(a){var c=!1,d=this.$getRecord(b.getKey(a));return angular.isObject(d)&&(c=b.updateRec(d,a),b.applyDefaults(d,this.$$defaults)),c},$$moved:function(a){var c=this.$getRecord(b.getKey(a));return angular.isObject(c)?(c.$priority=a.getPriority(),!0):!1},$$error:function(b){a.error(b),this.$destroy(b)},$$getKey:function(a){return angular.isObject(a)?a.$id:null},$$process:function(a,b,c){var d,e=this.$$getKey(b),f=!1;switch(a){case"child_added":d=this.$indexFor(e);break;case"child_moved":d=this.$indexFor(e),this._spliceOut(e);break;case"child_removed":f=null!==this._spliceOut(e);break;case"child_changed":f=!0;break;default:throw new Error("Invalid event type: "+a)}return angular.isDefined(d)&&(f=this._addAfter(b,c)!==d),f&&this.$$notify(a,e,c),f},$$notify:function(a,b,c){var d={event:a,key:b};angular.isDefined(c)&&(d.prevChild=c),angular.forEach(this._observers,function(a){a[0].call(a[1],d)})},_addAfter:function(a,b){var c;return null===b?c=0:(c=this.$indexFor(b)+1,0===c&&(c=this.$list.length)),this.$list.splice(c,0,a),this._indexCache[this.$$getKey(a)]=c,c},_spliceOut:function(a){var b=this.$indexFor(a);return b>-1?(delete this._indexCache[a],this.$list.splice(b,1)[0]):null},_resolveItem:function(a){var b=this.$list;if(angular.isNumber(a)&&a>=0&&b.length>=a)return b[a];if(angular.isObject(a)){var c=this.$$getKey(a),d=this.$getRecord(c);return d===a?d:null}return null},_assertNotDestroyed:function(a){if(this._isDestroyed)throw new Error("Cannot call "+a+" method on a destroyed $firebaseArray object")}},d.$extend=function(a,c){return 1===arguments.length&&angular.isObject(a)&&(c=a,a=function(b){return this instanceof a?(d.apply(this,arguments),this.$list):new a(b)}),b.inherit(a,d,c)},d}]),angular.module("firebase").factory("$FirebaseArray",["$log","$firebaseArray",function(a,b){return function(){return a.warn("$FirebaseArray has been renamed. Use $firebaseArray instead."),b.apply(null,arguments)}}])}(),function(){"use strict";var a;angular.module("firebase").factory("$firebaseAuth",["$q","$firebaseUtils",function(b,c){return function(d){var e=new a(b,c,d);return e.construct()}}]),a=function(a,b,c){if(this._q=a,this._utils=b,"string"==typeof c)throw new Error("Please provide a Firebase reference instead of a URL when creating a `$firebaseAuth` object.");this._ref=c,this._initialAuthResolver=this._initAuthResolver()},a.prototype={construct:function(){return this._object={$authWithCustomToken:this.authWithCustomToken.bind(this),$authAnonymously:this.authAnonymously.bind(this),$authWithPassword:this.authWithPassword.bind(this),$authWithOAuthPopup:this.authWithOAuthPopup.bind(this),$authWithOAuthRedirect:this.authWithOAuthRedirect.bind(this),$authWithOAuthToken:this.authWithOAuthToken.bind(this),$unauth:this.unauth.bind(this),$onAuth:this.onAuth.bind(this),$getAuth:this.getAuth.bind(this),$requireAuth:this.requireAuth.bind(this),$waitForAuth:this.waitForAuth.bind(this),$createUser:this.createUser.bind(this),$changePassword:this.changePassword.bind(this),$changeEmail:this.changeEmail.bind(this),$removeUser:this.removeUser.bind(this),$resetPassword:this.resetPassword.bind(this)},this._object},authWithCustomToken:function(a,b){var c=this._q.defer();try{this._ref.authWithCustomToken(a,this._utils.makeNodeResolver(c),b)}catch(d){c.reject(d)}return c.promise},authAnonymously:function(a){var b=this._q.defer();try{this._ref.authAnonymously(this._utils.makeNodeResolver(b),a)}catch(c){b.reject(c)}return b.promise},authWithPassword:function(a,b){var c=this._q.defer();try{this._ref.authWithPassword(a,this._utils.makeNodeResolver(c),b)}catch(d){c.reject(d)}return c.promise},authWithOAuthPopup:function(a,b){var c=this._q.defer();try{this._ref.authWithOAuthPopup(a,this._utils.makeNodeResolver(c),b)}catch(d){c.reject(d)}return c.promise},authWithOAuthRedirect:function(a,b){var c=this._q.defer();try{this._ref.authWithOAuthRedirect(a,this._utils.makeNodeResolver(c),b)}catch(d){c.reject(d)}return c.promise},authWithOAuthToken:function(a,b,c){var d=this._q.defer();try{this._ref.authWithOAuthToken(a,b,this._utils.makeNodeResolver(d),c)}catch(e){d.reject(e)}return d.promise},unauth:function(){null!==this.getAuth()&&this._ref.unauth()},onAuth:function(a,b){var c=this,d=this._utils.debounce(a,b,0);return this._ref.onAuth(d),function(){c._ref.offAuth(d)}},getAuth:function(){return this._ref.getAuth()},_routerMethodOnAuthPromise:function(a){var b=this._ref,c=this._utils;return this._initialAuthResolver.then(function(){var d=b.getAuth(),e=null;return e=a&&null===d?c.reject("AUTH_REQUIRED"):c.resolve(d)})},_initAuthResolver:function(){var a=this._ref;return this._utils.promise(function(b){function c(){a.offAuth(c),b()}a.onAuth(c)})},requireAuth:function(){return this._routerMethodOnAuthPromise(!0)},waitForAuth:function(){return this._routerMethodOnAuthPromise(!1)},createUser:function(a){var b=this._q.defer();if("string"==typeof a)throw new Error("$createUser() expects an object containing 'email' and 'password', but got a string.");try{this._ref.createUser(a,this._utils.makeNodeResolver(b))}catch(c){b.reject(c)}return b.promise},changePassword:function(a){var b=this._q.defer();if("string"==typeof a)throw new Error("$changePassword() expects an object containing 'email', 'oldPassword', and 'newPassword', but got a string.");try{this._ref.changePassword(a,this._utils.makeNodeResolver(b))}catch(c){b.reject(c)}return b.promise},changeEmail:function(a){var b=this._q.defer();if("function"!=typeof this._ref.changeEmail)throw new Error("$firebaseAuth.$changeEmail() requires Firebase version 2.1.0 or greater.");if("string"==typeof a)throw new Error("$changeEmail() expects an object containing 'oldEmail', 'newEmail', and 'password', but got a string.");try{this._ref.changeEmail(a,this._utils.makeNodeResolver(b))}catch(c){b.reject(c)}return b.promise},removeUser:function(a){var b=this._q.defer();if("string"==typeof a)throw new Error("$removeUser() expects an object containing 'email' and 'password', but got a string.");try{this._ref.removeUser(a,this._utils.makeNodeResolver(b))}catch(c){b.reject(c)}return b.promise},resetPassword:function(a){var b=this._q.defer();if("string"==typeof a)throw new Error("$resetPassword() expects an object containing 'email', but got a string.");try{this._ref.resetPassword(a,this._utils.makeNodeResolver(b))}catch(c){b.reject(c)}return b.promise}}}(),function(){"use strict";angular.module("firebase").factory("$firebaseObject",["$parse","$firebaseUtils","$log",function(a,b,c){function d(a){return this instanceof d?(this.$$conf={sync:new f(this,a),ref:a,binding:new e(this),listeners:[]},Object.defineProperty(this,"$$conf",{value:this.$$conf}),this.$id=b.getKey(a.ref()),this.$priority=null,b.applyDefaults(this,this.$$defaults),void this.$$conf.sync.init()):new d(a)}function e(a){this.subs=[],this.scope=null,this.key=null,this.rec=a}function f(a,d){function e(b){m.isDestroyed||(m.isDestroyed=!0,d.off("value",j),a=null,l(b||"destroyed"))}function f(){d.on("value",j,k),d.once("value",function(a){angular.isArray(a.val())&&c.warn("Storing data using array indices in Firebase can result in unexpected behavior. See https://www.firebase.com/docs/web/guide/understanding-data.html#section-arrays-in-firebase for more information. Also note that you probably wanted $firebaseArray and not $firebaseObject."),l(null)},l)}function g(b){h||(h=!0,b?i.reject(b):i.resolve(a))}var h=!1,i=b.defer(),j=b.batch(function(b){var c=a.$$updated(b);c&&a.$$notify()}),k=b.batch(function(b){g(b),a&&a.$$error(b)}),l=b.batch(g),m={isDestroyed:!1,destroy:e,init:f,ready:function(){return i.promise}};return m}return d.prototype={$save:function(){var a=this,c=a.$ref(),d=b.toJSON(a);return b.doSet(c,d).then(function(){return a.$$notify(),a.$ref()})},$remove:function(){var a=this;return b.trimKeys(a,{}),a.$value=null,b.doRemove(a.$ref()).then(function(){return a.$$notify(),a.$ref()})},$loaded:function(a,b){var c=this.$$conf.sync.ready();return arguments.length&&(c=c.then.call(c,a,b)),c},$ref:function(){return this.$$conf.ref},$bindTo:function(a,b){var c=this;return c.$loaded().then(function(){return c.$$conf.binding.bindTo(a,b)})},$watch:function(a,b){var c=this.$$conf.listeners;return c.push([a,b]),function(){var d=c.findIndex(function(c){return c[0]===a&&c[1]===b});d>-1&&c.splice(d,1)}},$destroy:function(a){var c=this;c.$isDestroyed||(c.$isDestroyed=!0,c.$$conf.sync.destroy(a),c.$$conf.binding.destroy(),b.each(c,function(a,b){delete c[b]}))},$$updated:function(a){var c=b.updateRec(this,a);return b.applyDefaults(this,this.$$defaults),c},$$error:function(a){c.error(a),this.$destroy(a)},$$scopeUpdated:function(a){var c=b.defer();return this.$ref().set(b.toJSON(a),b.makeNodeResolver(c)),c.promise},$$notify:function(){var a=this,b=this.$$conf.listeners.slice();angular.forEach(b,function(b){b[0].call(b[1],{event:"value",key:a.$id})})},forEach:function(a,c){return b.each(this,a,c)}},d.$extend=function(a,c){return 1===arguments.length&&angular.isObject(a)&&(c=a,a=function(b){return this instanceof a?void d.apply(this,arguments):new a(b)}),b.inherit(a,d,c)},e.prototype={assertNotBound:function(a){if(this.scope){var d="Cannot bind to "+a+" because this instance is already bound to "+this.key+"; one binding per instance (call unbind method or create another FirebaseObject instance)";return c.error(d),b.reject(d)}},bindTo:function(c,d){function e(e){function f(a){return angular.equals(a,k)&&a.$priority===k.$priority&&a.$value===k.$value}function g(a){j.assign(c,b.scopeData(a))}function h(){var a=j(c);return[a,a.$priority,a.$value]}var i=!1,j=a(d),k=e.rec;e.scope=c,e.varName=d;var l=b.debounce(function(a){var d=b.scopeData(a);k.$$scopeUpdated(d)["finally"](function(){i=!1,d.hasOwnProperty("$value")||(delete k.$value,delete j(c).$value)})},50,500),m=function(a){a=a[0],f(a)||(i=!0,l(a))},n=function(){i||f(j(c))||g(k)};return g(k),e.subs.push(c.$on("$destroy",e.unbind.bind(e))),e.subs.push(c.$watch(h,m,!0)),e.subs.push(k.$watch(n)),e.unbind.bind(e)}return this.assertNotBound(d)||e(this)},unbind:function(){this.scope&&(angular.forEach(this.subs,function(a){a()}),this.subs=[],this.scope=null,this.key=null)},destroy:function(){this.unbind(),this.rec=null}},d}]),angular.module("firebase").factory("$FirebaseObject",["$log","$firebaseObject",function(a,b){return function(){return a.warn("$FirebaseObject has been renamed. Use $firebaseObject instead."),b.apply(null,arguments)}}])}(),function(){"use strict";angular.module("firebase").factory("$firebase",function(){return function(){throw new Error("$firebase has been removed. You may instantiate $firebaseArray and $firebaseObject directly now. For simple write operations, just use the Firebase ref directly. See the AngularFire 1.0.0 changelog for details: https://www.firebase.com/docs/web/libraries/angular/changelog.html")}})}(),Array.prototype.indexOf||(Array.prototype.indexOf=function(a,b){if(void 0===this||null===this)throw new TypeError("'this' is null or not defined");var c=this.length>>>0;for(b=+b||0,Math.abs(b)===1/0&&(b=0),0>b&&(b+=c,0>b&&(b=0));c>b;b++)if(this[b]===a)return b;return-1}),Function.prototype.bind||(Function.prototype.bind=function(a){if("function"!=typeof this)throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");var b=Array.prototype.slice.call(arguments,1),c=this,d=function(){},e=function(){return c.apply(this instanceof d&&a?this:a,b.concat(Array.prototype.slice.call(arguments)))};return d.prototype=this.prototype,e.prototype=new d,e}),Array.prototype.findIndex||Object.defineProperty(Array.prototype,"findIndex",{enumerable:!1,configurable:!0,writable:!0,value:function(a){if(null==this)throw new TypeError("Array.prototype.find called on null or undefined");if("function"!=typeof a)throw new TypeError("predicate must be a function");for(var b,c=Object(this),d=c.length>>>0,e=arguments[1],f=0;d>f;f++)if(f in c&&(b=c[f],a.call(e,b,f,c)))return f;return-1}}),"function"!=typeof Object.create&&!function(){var a=function(){};Object.create=function(b){if(arguments.length>1)throw new Error("Second argument not supported");if(null===b)throw new Error("Cannot set a null [[Prototype]]");if("object"!=typeof b)throw new TypeError("Argument must be an object");return a.prototype=b,new a}}(),Object.keys||(Object.keys=function(){"use strict";var a=Object.prototype.hasOwnProperty,b=!{toString:null}.propertyIsEnumerable("toString"),c=["toString","toLocaleString","valueOf","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],d=c.length;return function(e){if("object"!=typeof e&&("function"!=typeof e||null===e))throw new TypeError("Object.keys called on non-object");var f,g,h=[];for(f in e)a.call(e,f)&&h.push(f);if(b)for(g=0;d>g;g++)a.call(e,c[g])&&h.push(c[g]);return h}}()),"function"!=typeof Object.getPrototypeOf&&("object"==typeof"test".__proto__?Object.getPrototypeOf=function(a){return a.__proto__}:Object.getPrototypeOf=function(a){return a.constructor.prototype}),function(){"use strict";function a(b){if(!angular.isObject(b))return b;var c=angular.isArray(b)?[]:{};return angular.forEach(b,function(b,d){("string"!=typeof d||"$"!==d.charAt(0))&&(c[d]=a(b))}),c}angular.module("firebase").factory("$firebaseConfig",["$firebaseArray","$firebaseObject","$injector",function(a,b,c){return function(d){var e=angular.extend({},d);return"string"==typeof e.objectFactory&&(e.objectFactory=c.get(e.objectFactory)),"string"==typeof e.arrayFactory&&(e.arrayFactory=c.get(e.arrayFactory)),angular.extend({arrayFactory:a,objectFactory:b},e)}}]).factory("$firebaseUtils",["$q","$timeout","$rootScope",function(b,c,d){function e(a){function c(a){e.resolve(a)}function d(a){e.reject(a)}if(!angular.isFunction(a))throw new Error("missing resolver function");var e=b.defer();return a(c,d),e.promise}var f={batch:function(a,b){return function(){var c=Array.prototype.slice.call(arguments,0);f.compile(function(){a.apply(b,c)})}},debounce:function(a,b,c,d){function e(){j&&(j(),j=null),i&&Date.now()-i>d?l||(l=!0,f.compile(g)):(i||(i=Date.now()),j=f.wait(g,c))}function g(){j=null,i=null,l=!1,a.apply(b,k)}function h(){k=Array.prototype.slice.call(arguments,0),e()}var i,j,k,l;if("number"==typeof b&&(d=c,c=b,b=null),"number"!=typeof c)throw new Error("Must provide a valid integer for wait. Try 0 for a default");if("function"!=typeof a)throw new Error("Must provide a valid function to debounce");return d||(d=10*c||100),h.running=function(){return i>0},h},assertValidRef:function(a,b){if(!angular.isObject(a)||"function"!=typeof a.ref||"function"!=typeof a.ref().transaction)throw new Error(b||"Invalid Firebase reference")},inherit:function(a,b,c){var d=a.prototype;return a.prototype=Object.create(b.prototype),a.prototype.constructor=a,angular.forEach(Object.keys(d),function(b){a.prototype[b]=d[b]}),angular.isObject(c)&&angular.extend(a.prototype,c),a},getPrototypeMethods:function(a,b,c){for(var d={},e=Object.getPrototypeOf({}),f=angular.isFunction(a)&&angular.isObject(a.prototype)?a.prototype:Object.getPrototypeOf(a);f&&f!==e;){for(var g in f)f.hasOwnProperty(g)&&!d.hasOwnProperty(g)&&(d[g]=!0,b.call(c,f[g],g,f));f=Object.getPrototypeOf(f)}},getPublicMethods:function(a,b,c){f.getPrototypeMethods(a,function(a,d){"function"==typeof a&&"_"!==d.charAt(0)&&b.call(c,a,d)})},defer:b.defer,reject:b.reject,resolve:b.when,promise:angular.isFunction(b)?b:e,makeNodeResolver:function(a){return function(b,c){null===b?(arguments.length>2&&(c=Array.prototype.slice.call(arguments,1)),a.resolve(c)):a.reject(b)}},wait:function(a,b){var d=c(a,b||0);return function(){d&&(c.cancel(d),d=null)}},compile:function(a){return d.$evalAsync(a||function(){})},deepCopy:function(a){if(!angular.isObject(a))return a;var b=angular.isArray(a)?a.slice():angular.extend({},a);for(var c in b)b.hasOwnProperty(c)&&angular.isObject(b[c])&&(b[c]=f.deepCopy(b[c]));return b},trimKeys:function(a,b){f.each(a,function(c,d){b.hasOwnProperty(d)||delete a[d]})},scopeData:function(a){var b={$id:a.$id,$priority:a.$priority},c=!1;return f.each(a,function(a,d){c=!0,b[d]=f.deepCopy(a)}),!c&&a.hasOwnProperty("$value")&&(b.$value=a.$value),b},updateRec:function(a,b){var c=b.val(),d=angular.extend({},a);return angular.isObject(c)?delete a.$value:(a.$value=c,c={}),f.trimKeys(a,c),angular.extend(a,c),a.$priority=b.getPriority(),!angular.equals(d,a)||d.$value!==a.$value||d.$priority!==a.$priority},applyDefaults:function(a,b){return angular.isObject(b)&&angular.forEach(b,function(b,c){a.hasOwnProperty(c)||(a[c]=b)}),a},dataKeys:function(a){var b=[];return f.each(a,function(a,c){b.push(c)}),b},each:function(a,b,c){if(angular.isObject(a)){for(var d in a)if(a.hasOwnProperty(d)){var e=d.charAt(0);"_"!==e&&"$"!==e&&"."!==e&&b.call(c,a[d],d,a)}}else if(angular.isArray(a))for(var f=0,g=a.length;g>f;f++)b.call(c,a[f],f,a);return a},getKey:function(a){return"function"==typeof a.key?a.key():a.name()},toJSON:function(b){var c;return angular.isObject(b)||(b={$value:b}),angular.isFunction(b.toJSON)?c=b.toJSON():(c={},f.each(b,function(b,d){c[d]=a(b)})),angular.isDefined(b.$value)&&0===Object.keys(c).length&&null!==b.$value&&(c[".value"]=b.$value),angular.isDefined(b.$priority)&&Object.keys(c).length>0&&null!==b.$priority&&(c[".priority"]=b.$priority),angular.forEach(c,function(a,b){if(b.match(/[.$\[\]#\/]/)&&".value"!==b&&".priority"!==b)throw new Error("Invalid key "+b+" (cannot contain .$[]#)");if(angular.isUndefined(a))throw new Error("Key "+b+" was undefined. Cannot pass undefined in JSON. Use null instead.")}),c},doSet:function(a,b){var c=f.defer();if(angular.isFunction(a.set)||!angular.isObject(b))a.set(b,f.makeNodeResolver(c));else{var d=angular.extend({},b);a.once("value",function(b){b.forEach(function(a){d.hasOwnProperty(f.getKey(a))||(d[f.getKey(a)]=null)}),a.ref().update(d,f.makeNodeResolver(c))},function(a){c.reject(a)})}return c.promise},doRemove:function(a){var b=f.defer();return angular.isFunction(a.remove)?a.remove(f.makeNodeResolver(b)):a.once("value",function(c){var d=[];c.forEach(function(a){var c=f.defer();d.push(c.promise),a.ref().remove(f.makeNodeResolver(b))}),f.allPromises(d).then(function(){b.resolve(a)},function(a){b.reject(a)})},function(a){b.reject(a)}),b.promise},VERSION:"1.1.2",allPromises:b.all.bind(b)};return f}])}();
+/**
+ * @license AngularJS v1.4.1
+ * (c) 2010-2015 Google, Inc. http://angularjs.org
+ * License: MIT
+ */
+(function(window, angular, undefined) {'use strict';
+
+/**
+ * @ngdoc module
+ * @name ngRoute
+ * @description
+ *
+ * # ngRoute
+ *
+ * The `ngRoute` module provides routing and deeplinking services and directives for angular apps.
+ *
+ * ## Example
+ * See {@link ngRoute.$route#example $route} for an example of configuring and using `ngRoute`.
+ *
+ *
+ * <div doc-module-components="ngRoute"></div>
+ */
+ /* global -ngRouteModule */
+var ngRouteModule = angular.module('ngRoute', ['ng']).
+                        provider('$route', $RouteProvider),
+    $routeMinErr = angular.$$minErr('ngRoute');
+
+/**
+ * @ngdoc provider
+ * @name $routeProvider
+ *
+ * @description
+ *
+ * Used for configuring routes.
+ *
+ * ## Example
+ * See {@link ngRoute.$route#example $route} for an example of configuring and using `ngRoute`.
+ *
+ * ## Dependencies
+ * Requires the {@link ngRoute `ngRoute`} module to be installed.
+ */
+function $RouteProvider() {
+  function inherit(parent, extra) {
+    return angular.extend(Object.create(parent), extra);
+  }
+
+  var routes = {};
+
+  /**
+   * @ngdoc method
+   * @name $routeProvider#when
+   *
+   * @param {string} path Route path (matched against `$location.path`). If `$location.path`
+   *    contains redundant trailing slash or is missing one, the route will still match and the
+   *    `$location.path` will be updated to add or drop the trailing slash to exactly match the
+   *    route definition.
+   *
+   *    * `path` can contain named groups starting with a colon: e.g. `:name`. All characters up
+   *        to the next slash are matched and stored in `$routeParams` under the given `name`
+   *        when the route matches.
+   *    * `path` can contain named groups starting with a colon and ending with a star:
+   *        e.g.`:name*`. All characters are eagerly stored in `$routeParams` under the given `name`
+   *        when the route matches.
+   *    * `path` can contain optional named groups with a question mark: e.g.`:name?`.
+   *
+   *    For example, routes like `/color/:color/largecode/:largecode*\/edit` will match
+   *    `/color/brown/largecode/code/with/slashes/edit` and extract:
+   *
+   *    * `color: brown`
+   *    * `largecode: code/with/slashes`.
+   *
+   *
+   * @param {Object} route Mapping information to be assigned to `$route.current` on route
+   *    match.
+   *
+   *    Object properties:
+   *
+   *    - `controller` – `{(string|function()=}` – Controller fn that should be associated with
+   *      newly created scope or the name of a {@link angular.Module#controller registered
+   *      controller} if passed as a string.
+   *    - `controllerAs` – `{string=}` – An identifier name for a reference to the controller.
+   *      If present, the controller will be published to scope under the `controllerAs` name.
+   *    - `template` – `{string=|function()=}` – html template as a string or a function that
+   *      returns an html template as a string which should be used by {@link
+   *      ngRoute.directive:ngView ngView} or {@link ng.directive:ngInclude ngInclude} directives.
+   *      This property takes precedence over `templateUrl`.
+   *
+   *      If `template` is a function, it will be called with the following parameters:
+   *
+   *      - `{Array.<Object>}` - route parameters extracted from the current
+   *        `$location.path()` by applying the current route
+   *
+   *    - `templateUrl` – `{string=|function()=}` – path or function that returns a path to an html
+   *      template that should be used by {@link ngRoute.directive:ngView ngView}.
+   *
+   *      If `templateUrl` is a function, it will be called with the following parameters:
+   *
+   *      - `{Array.<Object>}` - route parameters extracted from the current
+   *        `$location.path()` by applying the current route
+   *
+   *    - `resolve` - `{Object.<string, function>=}` - An optional map of dependencies which should
+   *      be injected into the controller. If any of these dependencies are promises, the router
+   *      will wait for them all to be resolved or one to be rejected before the controller is
+   *      instantiated.
+   *      If all the promises are resolved successfully, the values of the resolved promises are
+   *      injected and {@link ngRoute.$route#$routeChangeSuccess $routeChangeSuccess} event is
+   *      fired. If any of the promises are rejected the
+   *      {@link ngRoute.$route#$routeChangeError $routeChangeError} event is fired. The map object
+   *      is:
+   *
+   *      - `key` – `{string}`: a name of a dependency to be injected into the controller.
+   *      - `factory` - `{string|function}`: If `string` then it is an alias for a service.
+   *        Otherwise if function, then it is {@link auto.$injector#invoke injected}
+   *        and the return value is treated as the dependency. If the result is a promise, it is
+   *        resolved before its value is injected into the controller. Be aware that
+   *        `ngRoute.$routeParams` will still refer to the previous route within these resolve
+   *        functions.  Use `$route.current.params` to access the new route parameters, instead.
+   *
+   *    - `redirectTo` – {(string|function())=} – value to update
+   *      {@link ng.$location $location} path with and trigger route redirection.
+   *
+   *      If `redirectTo` is a function, it will be called with the following parameters:
+   *
+   *      - `{Object.<string>}` - route parameters extracted from the current
+   *        `$location.path()` by applying the current route templateUrl.
+   *      - `{string}` - current `$location.path()`
+   *      - `{Object}` - current `$location.search()`
+   *
+   *      The custom `redirectTo` function is expected to return a string which will be used
+   *      to update `$location.path()` and `$location.search()`.
+   *
+   *    - `[reloadOnSearch=true]` - {boolean=} - reload route when only `$location.search()`
+   *      or `$location.hash()` changes.
+   *
+   *      If the option is set to `false` and url in the browser changes, then
+   *      `$routeUpdate` event is broadcasted on the root scope.
+   *
+   *    - `[caseInsensitiveMatch=false]` - {boolean=} - match routes without being case sensitive
+   *
+   *      If the option is set to `true`, then the particular route can be matched without being
+   *      case sensitive
+   *
+   * @returns {Object} self
+   *
+   * @description
+   * Adds a new route definition to the `$route` service.
+   */
+  this.when = function(path, route) {
+    //copy original route object to preserve params inherited from proto chain
+    var routeCopy = angular.copy(route);
+    if (angular.isUndefined(routeCopy.reloadOnSearch)) {
+      routeCopy.reloadOnSearch = true;
+    }
+    if (angular.isUndefined(routeCopy.caseInsensitiveMatch)) {
+      routeCopy.caseInsensitiveMatch = this.caseInsensitiveMatch;
+    }
+    routes[path] = angular.extend(
+      routeCopy,
+      path && pathRegExp(path, routeCopy)
+    );
+
+    // create redirection for trailing slashes
+    if (path) {
+      var redirectPath = (path[path.length - 1] == '/')
+            ? path.substr(0, path.length - 1)
+            : path + '/';
+
+      routes[redirectPath] = angular.extend(
+        {redirectTo: path},
+        pathRegExp(redirectPath, routeCopy)
+      );
+    }
+
+    return this;
+  };
+
+  /**
+   * @ngdoc property
+   * @name $routeProvider#caseInsensitiveMatch
+   * @description
+   *
+   * A boolean property indicating if routes defined
+   * using this provider should be matched using a case insensitive
+   * algorithm. Defaults to `false`.
+   */
+  this.caseInsensitiveMatch = false;
+
+   /**
+    * @param path {string} path
+    * @param opts {Object} options
+    * @return {?Object}
+    *
+    * @description
+    * Normalizes the given path, returning a regular expression
+    * and the original path.
+    *
+    * Inspired by pathRexp in visionmedia/express/lib/utils.js.
+    */
+  function pathRegExp(path, opts) {
+    var insensitive = opts.caseInsensitiveMatch,
+        ret = {
+          originalPath: path,
+          regexp: path
+        },
+        keys = ret.keys = [];
+
+    path = path
+      .replace(/([().])/g, '\\$1')
+      .replace(/(\/)?:(\w+)([\?\*])?/g, function(_, slash, key, option) {
+        var optional = option === '?' ? option : null;
+        var star = option === '*' ? option : null;
+        keys.push({ name: key, optional: !!optional });
+        slash = slash || '';
+        return ''
+          + (optional ? '' : slash)
+          + '(?:'
+          + (optional ? slash : '')
+          + (star && '(.+?)' || '([^/]+)')
+          + (optional || '')
+          + ')'
+          + (optional || '');
+      })
+      .replace(/([\/$\*])/g, '\\$1');
+
+    ret.regexp = new RegExp('^' + path + '$', insensitive ? 'i' : '');
+    return ret;
+  }
+
+  /**
+   * @ngdoc method
+   * @name $routeProvider#otherwise
+   *
+   * @description
+   * Sets route definition that will be used on route change when no other route definition
+   * is matched.
+   *
+   * @param {Object|string} params Mapping information to be assigned to `$route.current`.
+   * If called with a string, the value maps to `redirectTo`.
+   * @returns {Object} self
+   */
+  this.otherwise = function(params) {
+    if (typeof params === 'string') {
+      params = {redirectTo: params};
+    }
+    this.when(null, params);
+    return this;
+  };
+
+
+  this.$get = ['$rootScope',
+               '$location',
+               '$routeParams',
+               '$q',
+               '$injector',
+               '$templateRequest',
+               '$sce',
+      function($rootScope, $location, $routeParams, $q, $injector, $templateRequest, $sce) {
+
+    /**
+     * @ngdoc service
+     * @name $route
+     * @requires $location
+     * @requires $routeParams
+     *
+     * @property {Object} current Reference to the current route definition.
+     * The route definition contains:
+     *
+     *   - `controller`: The controller constructor as define in route definition.
+     *   - `locals`: A map of locals which is used by {@link ng.$controller $controller} service for
+     *     controller instantiation. The `locals` contain
+     *     the resolved values of the `resolve` map. Additionally the `locals` also contain:
+     *
+     *     - `$scope` - The current route scope.
+     *     - `$template` - The current route template HTML.
+     *
+     * @property {Object} routes Object with all route configuration Objects as its properties.
+     *
+     * @description
+     * `$route` is used for deep-linking URLs to controllers and views (HTML partials).
+     * It watches `$location.url()` and tries to map the path to an existing route definition.
+     *
+     * Requires the {@link ngRoute `ngRoute`} module to be installed.
+     *
+     * You can define routes through {@link ngRoute.$routeProvider $routeProvider}'s API.
+     *
+     * The `$route` service is typically used in conjunction with the
+     * {@link ngRoute.directive:ngView `ngView`} directive and the
+     * {@link ngRoute.$routeParams `$routeParams`} service.
+     *
+     * @example
+     * This example shows how changing the URL hash causes the `$route` to match a route against the
+     * URL, and the `ngView` pulls in the partial.
+     *
+     * <example name="$route-service" module="ngRouteExample"
+     *          deps="angular-route.js" fixBase="true">
+     *   <file name="index.html">
+     *     <div ng-controller="MainController">
+     *       Choose:
+     *       <a href="Book/Moby">Moby</a> |
+     *       <a href="Book/Moby/ch/1">Moby: Ch1</a> |
+     *       <a href="Book/Gatsby">Gatsby</a> |
+     *       <a href="Book/Gatsby/ch/4?key=value">Gatsby: Ch4</a> |
+     *       <a href="Book/Scarlet">Scarlet Letter</a><br/>
+     *
+     *       <div ng-view></div>
+     *
+     *       <hr />
+     *
+     *       <pre>$location.path() = {{$location.path()}}</pre>
+     *       <pre>$route.current.templateUrl = {{$route.current.templateUrl}}</pre>
+     *       <pre>$route.current.params = {{$route.current.params}}</pre>
+     *       <pre>$route.current.scope.name = {{$route.current.scope.name}}</pre>
+     *       <pre>$routeParams = {{$routeParams}}</pre>
+     *     </div>
+     *   </file>
+     *
+     *   <file name="book.html">
+     *     controller: {{name}}<br />
+     *     Book Id: {{params.bookId}}<br />
+     *   </file>
+     *
+     *   <file name="chapter.html">
+     *     controller: {{name}}<br />
+     *     Book Id: {{params.bookId}}<br />
+     *     Chapter Id: {{params.chapterId}}
+     *   </file>
+     *
+     *   <file name="script.js">
+     *     angular.module('ngRouteExample', ['ngRoute'])
+     *
+     *      .controller('MainController', function($scope, $route, $routeParams, $location) {
+     *          $scope.$route = $route;
+     *          $scope.$location = $location;
+     *          $scope.$routeParams = $routeParams;
+     *      })
+     *
+     *      .controller('BookController', function($scope, $routeParams) {
+     *          $scope.name = "BookController";
+     *          $scope.params = $routeParams;
+     *      })
+     *
+     *      .controller('ChapterController', function($scope, $routeParams) {
+     *          $scope.name = "ChapterController";
+     *          $scope.params = $routeParams;
+     *      })
+     *
+     *     .config(function($routeProvider, $locationProvider) {
+     *       $routeProvider
+     *        .when('/Book/:bookId', {
+     *         templateUrl: 'book.html',
+     *         controller: 'BookController',
+     *         resolve: {
+     *           // I will cause a 1 second delay
+     *           delay: function($q, $timeout) {
+     *             var delay = $q.defer();
+     *             $timeout(delay.resolve, 1000);
+     *             return delay.promise;
+     *           }
+     *         }
+     *       })
+     *       .when('/Book/:bookId/ch/:chapterId', {
+     *         templateUrl: 'chapter.html',
+     *         controller: 'ChapterController'
+     *       });
+     *
+     *       // configure html5 to get links working on jsfiddle
+     *       $locationProvider.html5Mode(true);
+     *     });
+     *
+     *   </file>
+     *
+     *   <file name="protractor.js" type="protractor">
+     *     it('should load and compile correct template', function() {
+     *       element(by.linkText('Moby: Ch1')).click();
+     *       var content = element(by.css('[ng-view]')).getText();
+     *       expect(content).toMatch(/controller\: ChapterController/);
+     *       expect(content).toMatch(/Book Id\: Moby/);
+     *       expect(content).toMatch(/Chapter Id\: 1/);
+     *
+     *       element(by.partialLinkText('Scarlet')).click();
+     *
+     *       content = element(by.css('[ng-view]')).getText();
+     *       expect(content).toMatch(/controller\: BookController/);
+     *       expect(content).toMatch(/Book Id\: Scarlet/);
+     *     });
+     *   </file>
+     * </example>
+     */
+
+    /**
+     * @ngdoc event
+     * @name $route#$routeChangeStart
+     * @eventType broadcast on root scope
+     * @description
+     * Broadcasted before a route change. At this  point the route services starts
+     * resolving all of the dependencies needed for the route change to occur.
+     * Typically this involves fetching the view template as well as any dependencies
+     * defined in `resolve` route property. Once  all of the dependencies are resolved
+     * `$routeChangeSuccess` is fired.
+     *
+     * The route change (and the `$location` change that triggered it) can be prevented
+     * by calling `preventDefault` method of the event. See {@link ng.$rootScope.Scope#$on}
+     * for more details about event object.
+     *
+     * @param {Object} angularEvent Synthetic event object.
+     * @param {Route} next Future route information.
+     * @param {Route} current Current route information.
+     */
+
+    /**
+     * @ngdoc event
+     * @name $route#$routeChangeSuccess
+     * @eventType broadcast on root scope
+     * @description
+     * Broadcasted after a route dependencies are resolved.
+     * {@link ngRoute.directive:ngView ngView} listens for the directive
+     * to instantiate the controller and render the view.
+     *
+     * @param {Object} angularEvent Synthetic event object.
+     * @param {Route} current Current route information.
+     * @param {Route|Undefined} previous Previous route information, or undefined if current is
+     * first route entered.
+     */
+
+    /**
+     * @ngdoc event
+     * @name $route#$routeChangeError
+     * @eventType broadcast on root scope
+     * @description
+     * Broadcasted if any of the resolve promises are rejected.
+     *
+     * @param {Object} angularEvent Synthetic event object
+     * @param {Route} current Current route information.
+     * @param {Route} previous Previous route information.
+     * @param {Route} rejection Rejection of the promise. Usually the error of the failed promise.
+     */
+
+    /**
+     * @ngdoc event
+     * @name $route#$routeUpdate
+     * @eventType broadcast on root scope
+     * @description
+     * The `reloadOnSearch` property has been set to false, and we are reusing the same
+     * instance of the Controller.
+     *
+     * @param {Object} angularEvent Synthetic event object
+     * @param {Route} current Current/previous route information.
+     */
+
+    var forceReload = false,
+        preparedRoute,
+        preparedRouteIsUpdateOnly,
+        $route = {
+          routes: routes,
+
+          /**
+           * @ngdoc method
+           * @name $route#reload
+           *
+           * @description
+           * Causes `$route` service to reload the current route even if
+           * {@link ng.$location $location} hasn't changed.
+           *
+           * As a result of that, {@link ngRoute.directive:ngView ngView}
+           * creates new scope and reinstantiates the controller.
+           */
+          reload: function() {
+            forceReload = true;
+            $rootScope.$evalAsync(function() {
+              // Don't support cancellation of a reload for now...
+              prepareRoute();
+              commitRoute();
+            });
+          },
+
+          /**
+           * @ngdoc method
+           * @name $route#updateParams
+           *
+           * @description
+           * Causes `$route` service to update the current URL, replacing
+           * current route parameters with those specified in `newParams`.
+           * Provided property names that match the route's path segment
+           * definitions will be interpolated into the location's path, while
+           * remaining properties will be treated as query params.
+           *
+           * @param {!Object<string, string>} newParams mapping of URL parameter names to values
+           */
+          updateParams: function(newParams) {
+            if (this.current && this.current.$$route) {
+              newParams = angular.extend({}, this.current.params, newParams);
+              $location.path(interpolate(this.current.$$route.originalPath, newParams));
+              // interpolate modifies newParams, only query params are left
+              $location.search(newParams);
+            } else {
+              throw $routeMinErr('norout', 'Tried updating route when with no current route');
+            }
+          }
+        };
+
+    $rootScope.$on('$locationChangeStart', prepareRoute);
+    $rootScope.$on('$locationChangeSuccess', commitRoute);
+
+    return $route;
+
+    /////////////////////////////////////////////////////
+
+    /**
+     * @param on {string} current url
+     * @param route {Object} route regexp to match the url against
+     * @return {?Object}
+     *
+     * @description
+     * Check if the route matches the current url.
+     *
+     * Inspired by match in
+     * visionmedia/express/lib/router/router.js.
+     */
+    function switchRouteMatcher(on, route) {
+      var keys = route.keys,
+          params = {};
+
+      if (!route.regexp) return null;
+
+      var m = route.regexp.exec(on);
+      if (!m) return null;
+
+      for (var i = 1, len = m.length; i < len; ++i) {
+        var key = keys[i - 1];
+
+        var val = m[i];
+
+        if (key && val) {
+          params[key.name] = val;
+        }
+      }
+      return params;
+    }
+
+    function prepareRoute($locationEvent) {
+      var lastRoute = $route.current;
+
+      preparedRoute = parseRoute();
+      preparedRouteIsUpdateOnly = preparedRoute && lastRoute && preparedRoute.$$route === lastRoute.$$route
+          && angular.equals(preparedRoute.pathParams, lastRoute.pathParams)
+          && !preparedRoute.reloadOnSearch && !forceReload;
+
+      if (!preparedRouteIsUpdateOnly && (lastRoute || preparedRoute)) {
+        if ($rootScope.$broadcast('$routeChangeStart', preparedRoute, lastRoute).defaultPrevented) {
+          if ($locationEvent) {
+            $locationEvent.preventDefault();
+          }
+        }
+      }
+    }
+
+    function commitRoute() {
+      var lastRoute = $route.current;
+      var nextRoute = preparedRoute;
+
+      if (preparedRouteIsUpdateOnly) {
+        lastRoute.params = nextRoute.params;
+        angular.copy(lastRoute.params, $routeParams);
+        $rootScope.$broadcast('$routeUpdate', lastRoute);
+      } else if (nextRoute || lastRoute) {
+        forceReload = false;
+        $route.current = nextRoute;
+        if (nextRoute) {
+          if (nextRoute.redirectTo) {
+            if (angular.isString(nextRoute.redirectTo)) {
+              $location.path(interpolate(nextRoute.redirectTo, nextRoute.params)).search(nextRoute.params)
+                       .replace();
+            } else {
+              $location.url(nextRoute.redirectTo(nextRoute.pathParams, $location.path(), $location.search()))
+                       .replace();
+            }
+          }
+        }
+
+        $q.when(nextRoute).
+          then(function() {
+            if (nextRoute) {
+              var locals = angular.extend({}, nextRoute.resolve),
+                  template, templateUrl;
+
+              angular.forEach(locals, function(value, key) {
+                locals[key] = angular.isString(value) ?
+                    $injector.get(value) : $injector.invoke(value, null, null, key);
+              });
+
+              if (angular.isDefined(template = nextRoute.template)) {
+                if (angular.isFunction(template)) {
+                  template = template(nextRoute.params);
+                }
+              } else if (angular.isDefined(templateUrl = nextRoute.templateUrl)) {
+                if (angular.isFunction(templateUrl)) {
+                  templateUrl = templateUrl(nextRoute.params);
+                }
+                templateUrl = $sce.getTrustedResourceUrl(templateUrl);
+                if (angular.isDefined(templateUrl)) {
+                  nextRoute.loadedTemplateUrl = templateUrl;
+                  template = $templateRequest(templateUrl);
+                }
+              }
+              if (angular.isDefined(template)) {
+                locals['$template'] = template;
+              }
+              return $q.all(locals);
+            }
+          }).
+          then(function(locals) {
+            // after route change
+            if (nextRoute == $route.current) {
+              if (nextRoute) {
+                nextRoute.locals = locals;
+                angular.copy(nextRoute.params, $routeParams);
+              }
+              $rootScope.$broadcast('$routeChangeSuccess', nextRoute, lastRoute);
+            }
+          }, function(error) {
+            if (nextRoute == $route.current) {
+              $rootScope.$broadcast('$routeChangeError', nextRoute, lastRoute, error);
+            }
+          });
+      }
+    }
+
+
+    /**
+     * @returns {Object} the current active route, by matching it against the URL
+     */
+    function parseRoute() {
+      // Match a route
+      var params, match;
+      angular.forEach(routes, function(route, path) {
+        if (!match && (params = switchRouteMatcher($location.path(), route))) {
+          match = inherit(route, {
+            params: angular.extend({}, $location.search(), params),
+            pathParams: params});
+          match.$$route = route;
+        }
+      });
+      // No route matched; fallback to "otherwise" route
+      return match || routes[null] && inherit(routes[null], {params: {}, pathParams:{}});
+    }
+
+    /**
+     * @returns {string} interpolation of the redirect path with the parameters
+     */
+    function interpolate(string, params) {
+      var result = [];
+      angular.forEach((string || '').split(':'), function(segment, i) {
+        if (i === 0) {
+          result.push(segment);
+        } else {
+          var segmentMatch = segment.match(/(\w+)(?:[?*])?(.*)/);
+          var key = segmentMatch[1];
+          result.push(params[key]);
+          result.push(segmentMatch[2] || '');
+          delete params[key];
+        }
+      });
+      return result.join('');
+    }
+  }];
+}
+
+ngRouteModule.provider('$routeParams', $RouteParamsProvider);
+
+
+/**
+ * @ngdoc service
+ * @name $routeParams
+ * @requires $route
+ *
+ * @description
+ * The `$routeParams` service allows you to retrieve the current set of route parameters.
+ *
+ * Requires the {@link ngRoute `ngRoute`} module to be installed.
+ *
+ * The route parameters are a combination of {@link ng.$location `$location`}'s
+ * {@link ng.$location#search `search()`} and {@link ng.$location#path `path()`}.
+ * The `path` parameters are extracted when the {@link ngRoute.$route `$route`} path is matched.
+ *
+ * In case of parameter name collision, `path` params take precedence over `search` params.
+ *
+ * The service guarantees that the identity of the `$routeParams` object will remain unchanged
+ * (but its properties will likely change) even when a route change occurs.
+ *
+ * Note that the `$routeParams` are only updated *after* a route change completes successfully.
+ * This means that you cannot rely on `$routeParams` being correct in route resolve functions.
+ * Instead you can use `$route.current.params` to access the new route's parameters.
+ *
+ * @example
+ * ```js
+ *  // Given:
+ *  // URL: http://server.com/index.html#/Chapter/1/Section/2?search=moby
+ *  // Route: /Chapter/:chapterId/Section/:sectionId
+ *  //
+ *  // Then
+ *  $routeParams ==> {chapterId:'1', sectionId:'2', search:'moby'}
+ * ```
+ */
+function $RouteParamsProvider() {
+  this.$get = function() { return {}; };
+}
+
+ngRouteModule.directive('ngView', ngViewFactory);
+ngRouteModule.directive('ngView', ngViewFillContentFactory);
+
+
+/**
+ * @ngdoc directive
+ * @name ngView
+ * @restrict ECA
+ *
+ * @description
+ * # Overview
+ * `ngView` is a directive that complements the {@link ngRoute.$route $route} service by
+ * including the rendered template of the current route into the main layout (`index.html`) file.
+ * Every time the current route changes, the included view changes with it according to the
+ * configuration of the `$route` service.
+ *
+ * Requires the {@link ngRoute `ngRoute`} module to be installed.
+ *
+ * @animations
+ * enter - animation is used to bring new content into the browser.
+ * leave - animation is used to animate existing content away.
+ *
+ * The enter and leave animation occur concurrently.
+ *
+ * @scope
+ * @priority 400
+ * @param {string=} onload Expression to evaluate whenever the view updates.
+ *
+ * @param {string=} autoscroll Whether `ngView` should call {@link ng.$anchorScroll
+ *                  $anchorScroll} to scroll the viewport after the view is updated.
+ *
+ *                  - If the attribute is not set, disable scrolling.
+ *                  - If the attribute is set without value, enable scrolling.
+ *                  - Otherwise enable scrolling only if the `autoscroll` attribute value evaluated
+ *                    as an expression yields a truthy value.
+ * @example
+    <example name="ngView-directive" module="ngViewExample"
+             deps="angular-route.js;angular-animate.js"
+             animations="true" fixBase="true">
+      <file name="index.html">
+        <div ng-controller="MainCtrl as main">
+          Choose:
+          <a href="Book/Moby">Moby</a> |
+          <a href="Book/Moby/ch/1">Moby: Ch1</a> |
+          <a href="Book/Gatsby">Gatsby</a> |
+          <a href="Book/Gatsby/ch/4?key=value">Gatsby: Ch4</a> |
+          <a href="Book/Scarlet">Scarlet Letter</a><br/>
+
+          <div class="view-animate-container">
+            <div ng-view class="view-animate"></div>
+          </div>
+          <hr />
+
+          <pre>$location.path() = {{main.$location.path()}}</pre>
+          <pre>$route.current.templateUrl = {{main.$route.current.templateUrl}}</pre>
+          <pre>$route.current.params = {{main.$route.current.params}}</pre>
+          <pre>$routeParams = {{main.$routeParams}}</pre>
+        </div>
+      </file>
+
+      <file name="book.html">
+        <div>
+          controller: {{book.name}}<br />
+          Book Id: {{book.params.bookId}}<br />
+        </div>
+      </file>
+
+      <file name="chapter.html">
+        <div>
+          controller: {{chapter.name}}<br />
+          Book Id: {{chapter.params.bookId}}<br />
+          Chapter Id: {{chapter.params.chapterId}}
+        </div>
+      </file>
+
+      <file name="animations.css">
+        .view-animate-container {
+          position:relative;
+          height:100px!important;
+          background:white;
+          border:1px solid black;
+          height:40px;
+          overflow:hidden;
+        }
+
+        .view-animate {
+          padding:10px;
+        }
+
+        .view-animate.ng-enter, .view-animate.ng-leave {
+          -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
+          transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
+
+          display:block;
+          width:100%;
+          border-left:1px solid black;
+
+          position:absolute;
+          top:0;
+          left:0;
+          right:0;
+          bottom:0;
+          padding:10px;
+        }
+
+        .view-animate.ng-enter {
+          left:100%;
+        }
+        .view-animate.ng-enter.ng-enter-active {
+          left:0;
+        }
+        .view-animate.ng-leave.ng-leave-active {
+          left:-100%;
+        }
+      </file>
+
+      <file name="script.js">
+        angular.module('ngViewExample', ['ngRoute', 'ngAnimate'])
+          .config(['$routeProvider', '$locationProvider',
+            function($routeProvider, $locationProvider) {
+              $routeProvider
+                .when('/Book/:bookId', {
+                  templateUrl: 'book.html',
+                  controller: 'BookCtrl',
+                  controllerAs: 'book'
+                })
+                .when('/Book/:bookId/ch/:chapterId', {
+                  templateUrl: 'chapter.html',
+                  controller: 'ChapterCtrl',
+                  controllerAs: 'chapter'
+                });
+
+              $locationProvider.html5Mode(true);
+          }])
+          .controller('MainCtrl', ['$route', '$routeParams', '$location',
+            function($route, $routeParams, $location) {
+              this.$route = $route;
+              this.$location = $location;
+              this.$routeParams = $routeParams;
+          }])
+          .controller('BookCtrl', ['$routeParams', function($routeParams) {
+            this.name = "BookCtrl";
+            this.params = $routeParams;
+          }])
+          .controller('ChapterCtrl', ['$routeParams', function($routeParams) {
+            this.name = "ChapterCtrl";
+            this.params = $routeParams;
+          }]);
+
+      </file>
+
+      <file name="protractor.js" type="protractor">
+        it('should load and compile correct template', function() {
+          element(by.linkText('Moby: Ch1')).click();
+          var content = element(by.css('[ng-view]')).getText();
+          expect(content).toMatch(/controller\: ChapterCtrl/);
+          expect(content).toMatch(/Book Id\: Moby/);
+          expect(content).toMatch(/Chapter Id\: 1/);
+
+          element(by.partialLinkText('Scarlet')).click();
+
+          content = element(by.css('[ng-view]')).getText();
+          expect(content).toMatch(/controller\: BookCtrl/);
+          expect(content).toMatch(/Book Id\: Scarlet/);
+        });
+      </file>
+    </example>
+ */
+
+
+/**
+ * @ngdoc event
+ * @name ngView#$viewContentLoaded
+ * @eventType emit on the current ngView scope
+ * @description
+ * Emitted every time the ngView content is reloaded.
+ */
+ngViewFactory.$inject = ['$route', '$anchorScroll', '$animate'];
+function ngViewFactory($route, $anchorScroll, $animate) {
+  return {
+    restrict: 'ECA',
+    terminal: true,
+    priority: 400,
+    transclude: 'element',
+    link: function(scope, $element, attr, ctrl, $transclude) {
+        var currentScope,
+            currentElement,
+            previousLeaveAnimation,
+            autoScrollExp = attr.autoscroll,
+            onloadExp = attr.onload || '';
+
+        scope.$on('$routeChangeSuccess', update);
+        update();
+
+        function cleanupLastView() {
+          if (previousLeaveAnimation) {
+            $animate.cancel(previousLeaveAnimation);
+            previousLeaveAnimation = null;
+          }
+
+          if (currentScope) {
+            currentScope.$destroy();
+            currentScope = null;
+          }
+          if (currentElement) {
+            previousLeaveAnimation = $animate.leave(currentElement);
+            previousLeaveAnimation.then(function() {
+              previousLeaveAnimation = null;
+            });
+            currentElement = null;
+          }
+        }
+
+        function update() {
+          var locals = $route.current && $route.current.locals,
+              template = locals && locals.$template;
+
+          if (angular.isDefined(template)) {
+            var newScope = scope.$new();
+            var current = $route.current;
+
+            // Note: This will also link all children of ng-view that were contained in the original
+            // html. If that content contains controllers, ... they could pollute/change the scope.
+            // However, using ng-view on an element with additional content does not make sense...
+            // Note: We can't remove them in the cloneAttchFn of $transclude as that
+            // function is called before linking the content, which would apply child
+            // directives to non existing elements.
+            var clone = $transclude(newScope, function(clone) {
+              $animate.enter(clone, null, currentElement || $element).then(function onNgViewEnter() {
+                if (angular.isDefined(autoScrollExp)
+                  && (!autoScrollExp || scope.$eval(autoScrollExp))) {
+                  $anchorScroll();
+                }
+              });
+              cleanupLastView();
+            });
+
+            currentElement = clone;
+            currentScope = current.scope = newScope;
+            currentScope.$emit('$viewContentLoaded');
+            currentScope.$eval(onloadExp);
+          } else {
+            cleanupLastView();
+          }
+        }
+    }
+  };
+}
+
+// This directive is called during the $transclude call of the first `ngView` directive.
+// It will replace and compile the content of the element with the loaded template.
+// We need this directive so that the element content is already filled when
+// the link function of another directive on the same element as ngView
+// is called.
+ngViewFillContentFactory.$inject = ['$compile', '$controller', '$route'];
+function ngViewFillContentFactory($compile, $controller, $route) {
+  return {
+    restrict: 'ECA',
+    priority: -400,
+    link: function(scope, $element) {
+      var current = $route.current,
+          locals = current.locals;
+
+      $element.html(locals.$template);
+
+      var link = $compile($element.contents());
+
+      if (current.controller) {
+        locals.$scope = scope;
+        var controller = $controller(current.controller, locals);
+        if (current.controllerAs) {
+          scope[current.controllerAs] = controller;
+        }
+        $element.data('$ngControllerController', controller);
+        $element.children().data('$ngControllerController', controller);
+      }
+
+      link(scope);
+    }
+  };
+}
+
+
+})(window, window.angular);
