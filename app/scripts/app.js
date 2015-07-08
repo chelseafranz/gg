@@ -44,4 +44,13 @@ app.config(function($routeProvider){
 
  });
 
+// sets random background-image on each reload
+// $(document).ready(function() {
+//   var bgArray = ['car.jpeg', 'elmyr.jpg', 'beach.jpg', 'concert.jpeg'];
+//   var bg = bgArray[Math.floor(Math.random() * bgArray.length)];
+//   var path = '../images/';
+//   var imageUrl = path + bg;
+//   $('body').css('background-image', 'url(' + imageUrl +')');
+// });
+
 

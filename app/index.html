@@ -29,19 +29,39 @@
     <!-- endbuild -->
   </head>
   <body ng-app="MyApp" ng-controller="AppCtrl">
-    <h1>GIRL GANG</h1>
+    <div class="background">
+   
+    <div class="menu">
       <a href="#login">login</a> | <a href="#start">start</a> | <a href="#profile">profile</a>
+    </div>
 
     <div class="hero-unit">
     
     <ng-view></ng-view>
 
     <div class="landingPage">
-    <div class="comingSoon">
-      <span class="one">COMING <br><span>SOON</span></span><br>
-      <span class="two">because your friends still suck.</span>
-    </div>
+        <h1>COMING SOON:</h1>
 
+      <div class="comingSoon">
+        <span class="one">GIRL <span>GANG</span></span><br>
+        <span class="two">because your friends still suck.</span>
+      </div>
+    
+      <!-- <md-input-container class="waitList"> -->
+      <div class="inputContainer">
+        <input id="input" placeholder="join the waiting list. email, please" ng-model="user.title">
+        <md-button aria-label="join" id="button" class="md-fab">
+        <span class="entypo-paper-plane"></span>
+        <md-tooltip>No useless shit, pinkie promise.</md-tooltip>
+      </md-button>
+       </div> 
+      <!-- /md-input-container> -->
+
+      
+
+      <br>
+      <md-button aria-label="twitter" id="button" class="md-fab"><span class="brandico-twitter-bird"></span></md-button>
+       <md-button aria-label="twitter" id="button" class="md-fab"><span class="brandico-instagram"></span></md-button>
 
 
 
@@ -57,7 +77,7 @@
 
 
 
-
+</div>
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->

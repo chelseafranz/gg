@@ -1,7 +1,7 @@
  // Bourbon & Neat
 @import '../../bower_components/bourbon/dist/bourbon';
 @import '../../bower_components/neat/app/assets/stylesheets/neat';
-@import url(http://weloveiconfonts.com/api/?family=entypo|fontawesome|typicons);
+@import url(http://weloveiconfonts.com/api/?family=entypo|fontawesome|typicons|brandico);
 
 /* entypo */
 [class*="entypo-"]:before {
@@ -15,6 +15,11 @@
 [class*="typicons-"]:before {
   font-family: 'Typicons', sans-serif;
 }
+/* brandico */
+[class*="brandico-"]:before {
+  font-family: 'brandico', sans-serif;
+}
+
 @font-face {
     font-family: haymaker;
     src: url(haymaker.woff);
@@ -26,31 +31,84 @@ body {
   background: #fafafa;
   font-family: 'Open Sans Condensed';
   color: #333;
+
+  }
+  .inputContainer{
+    width: 100%;
+    margin: 0 auto;
+    padding-left: 40%;
+  }
+  #input{
+    font-family: 'Open Sans Condensed';
+    width: 35%;
+    border-radius: 20px;
+    border: none;
+    padding-left: 11px;
+    line-height: 35px;
+    margin: 0 auto;
+  }
+ 
+  #button{
+    
+    >span{
+        color: black;}
+
+  }
+
+
+.background{
+  margin-top: -100px;
+  background: url(../images/shakeshack.jpg);
+  background-size: 100%;
+  background-repeat: none;
+  background-position: fixed;
+
+}
+
+
+.menu{
+  text-align: center;
+  padding: 15px 10px 40px 10px;
+  display: none;
 }
 
 .hero-unit {
-
   padding: 10px 15px;
 
   }
-h1 {
-    font-size: 60px;
-    line-height: 1;
-    letter-spacing: -1px;
-    font-family: haymaker;
-  }
+
 
   .landingPage{
     line-height: 26px;
+    >h1{
+
+        /*background: url(https://download.unsplash.com/photo-1429962714451-bb934ecdc4ec);
+        background-position: 18px;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;*/
+
+        margin-bottom: 10px;
+        margin-top: 173px;
+        line-height: 1;
+        background-size: 31%;
+        letter-spacing: -1px;
+        font-family: 'Open Sans Condensed';
+        text-align: center;
+        font-size: 7em;
+        color: white;
+    }
 
     .comingSoon{
       width: 100%;
       margin: 0 auto;
       text-align: center;
+      padding-left: 55px;
     }
     .one{
       font-size: 8em;
-      font-family: haymaker;
+      font-family: 'Open Sans Condensed';
+      color: white;
+    
       line-height: 99px;
       >span{
         letter-spacing: 5px;
@@ -59,13 +117,21 @@ h1 {
       }
     }
     .two{
-      font-size: 2em;
+      font-size: 1em;
       font-weight: lighter;
       letter-spacing: 5px;
+      color: white;
 
     }
 
+    .waitList{
+      width: 50%;
+    }
+  }
 
-
+  @media screen and (max-width: 500px){
+    .one{
+      font-size: 5em;
+    }
   }
 
