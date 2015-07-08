@@ -27,7 +27,7 @@ var myDataRef = new Firebase('https://girl-gang.firebaseio.com');
 
 app.config(function($routeProvider){
 
- $routeProvider.when('/',{
+ $routeProvider.when('/login',{
     templateUrl: 'views/loginTemplate.html',
     controller: 'AppCtrl'
  });

@@ -7,18 +7,21 @@
 [class*="entypo-"]:before {
   font-family: 'entypo', sans-serif;
 }
-
 /* fontawesome */
 [class*="fontawesome-"]:before {
   font-family: 'FontAwesome', sans-serif;
 }
-
 /* typicons */
 [class*="typicons-"]:before {
   font-family: 'Typicons', sans-serif;
 }
+@font-face {
+    font-family: haymaker;
+    src: url(haymaker.woff);
+}
 
-// Custom Styles
+
+
 body {
   background: #fafafa;
   font-family: 'Open Sans Condensed';
@@ -26,37 +29,43 @@ body {
 }
 
 .hero-unit {
-  margin: 50px auto 0 auto;
-  width: 600px;
-  font-size: 18px;
-  font-weight: 200;
-  line-height: 30px;
-  
-  border-radius: 6px;
-  padding: 60px;
 
-}
+  padding: 10px 15px;
+
+  }
 h1 {
     font-size: 60px;
     line-height: 1;
     letter-spacing: -1px;
-    font-family: 'Oswald';
+    font-family: haymaker;
   }
-.buttondemoBasicUsage section {
-  background: #f7f7f7;
-  border-radius: 3px;
-  text-align: center;
-  margin: 1em;
-  position: relative !important;
-  padding-bottom: 10px; }
-.buttondemoBasicUsage md-content {
-  margin-right: 7px; }
-.buttondemoBasicUsage section .md-button {
-  margin-top: 16px;
-  margin-bottom: 16px; }
-.buttondemoBasicUsage .label {
-  position: absolute;
-  bottom: 5px;
-  left: 7px;
-  font-size: 14px;
-  opacity: 0.54; }
+
+  .landingPage{
+    line-height: 26px;
+
+    .comingSoon{
+      width: 100%;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .one{
+      font-size: 8em;
+      font-family: haymaker;
+      line-height: 99px;
+      >span{
+        letter-spacing: 5px;
+        padding-right: 55px;
+
+      }
+    }
+    .two{
+      font-size: 2em;
+      font-weight: lighter;
+      letter-spacing: 5px;
+
+    }
+
+
+
+  }
+

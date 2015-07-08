@@ -25,26 +25,24 @@ var myDataRef = new Firebase('https://girl-gang.firebaseio.com');
 
 
 
+app.config(function($routeProvider){
 
-app.config(['$routeProvider', function($routeProvider){
-
-
- $routeProvider.when('/',{
+ $routeProvider.when('/login',{
     templateUrl: 'views/loginTemplate.html',
     controller: 'AppCtrl'
  });
 
     $routeProvider.when('/start', {
       templateUrl: 'views/startTemplate.html',
-      controller: 'StartController'
+      controller: 'AppCtrl'
     });
 
-     $routeProvider.when('/users/:uid', {
-      templateUrl: 'scripts/views/user-profile.html',
+     $routeProvider.when('/profile', {
+      templateUrl: 'views/profile.html',
       controller: 'AppCtrl'
      });
-}]);
 
+ });
 
 
 
@@ -58,7 +56,10 @@ app.controller('AppCtrl', ['$scope', '$firebaseAuth', '$location', function($sco
 
 
     $scope.login = function(){
-  UserFactory.login()
+  console.log('login');
+};
+$scope.start = function(){
+  console.log('start clicked');
 }
 
 }]);

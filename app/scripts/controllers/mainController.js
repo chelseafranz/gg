@@ -8,7 +8,10 @@ app.controller('AppCtrl', ['$scope', '$firebaseAuth', '$location', function($sco
 
 
     $scope.login = function(){
-  UserFactory.login()
+  console.log('login');
+};
+$scope.start = function(){
+  console.log('start clicked');
 }
 
 }]);
