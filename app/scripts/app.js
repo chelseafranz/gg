@@ -3,24 +3,28 @@ var ref = new Firebase("https://girl-gang.firebaseio.com");
 var myDataRef = new Firebase('https://girl-gang.firebaseio.com');
 
 
-      $('#passwordInput').click(function (e) {
+      $('#input').keypress(function (e) {
               if (e.keyCode == 13) {
-                var email = $('#emailInput').val();
-                var password = $('#passwordInput').val();
+                var email = $('#input').val();
                 ref.createUser({
-                        email    : email,
-                        password : password
+                        email    : email, 
+                        password : "password"
+                   
                       }, function(error, userData) {
                         if (error) {
                           console.log("Error creating user:", error);
                         } else {
                           console.log("Successfully created user account with uid:", userData.uid);
-                          $location.path('/start/');
+                          //$location.path('/start/');
                       };
                       });
 
               }
             });
+
+
+
+
 
 
 
